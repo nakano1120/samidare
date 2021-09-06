@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #com{
+            font-size:300%;
+        }
+    </style>
+</head>
+<body>
+    <div id="player">しゃべったやつ</div>
+    <div id="com">かえしたやつ</div>
+    <input type="text" id="committext" placeholder="単語,返し の形式で入力"><input type="button" value="登録" onclick="commit()">
+    <script>
+    let utterance
+    let foundtext=0
+    let music = new Audio('se.mp3');
+    const recog = new webkitSpeechRecognition();
+    let spe = new SpeechSynthesisUtterance();
+    recog.lang = "ja-JP";
+    document.body.addEventListener('keydown',
+    event => {
+        if (event.key === ' ') {
+            music.play()
+            speechSynthesis.cancel()
+            recog.start()
+        }
+    });
+    recog.onresult = (event) => {
+        utterance = event.results[0][0].transcript
+        document.getElementById("player").innerHTML = utterance
+    }
+    recog.onend = (event) => {
+        comeback()
+    }
+    function comeback(){
+        music.play()
+        let playervoice = document.getElementById("player").innerHTML
+        for (key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                if(playervoice.indexOf(key) != -1){
+                    document.getElementById('com').innerHTML=localStorage.getItem(key)
+                    foundtext=1
+                    break;
+                }
+            }
+        }
+        if(foundtext==0){
+            document.getElementById('com').innerHTML="なるほど！"
+        }
+        foundtext=0
+        spe.text = document.getElementById('com').innerHTML
+        spe.lang = "ja-JP"
+        speechSynthesis.speak(spe)
+    }
+    function commit(){
+        txt=document.getElementById('committext').value
+        anytext=txt.split(",")
+        if(anytext[0]=="" || anytext[1]==""){
+            alert("文字が空白です")
+            return
+        }
+        localStorage.setItem(anytext[0], anytext[1]);
+        document.getElementById('committext').value=""
+    }
+    </script>
+</body>
+</html>
