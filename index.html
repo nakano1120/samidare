@@ -12,6 +12,7 @@
     </style>
 </head>
 <body>
+    <input type="button" value="開始" onclick="rec()">
     <div id="player">しゃべったやつ</div>
     <div id="com">かえしたやつ</div>
     <input type="text" id="committext" placeholder="単語,返し の形式で入力"><input type="button" value="登録" onclick="commit()">
@@ -25,11 +26,14 @@
     document.body.addEventListener('keydown',
     event => {
         if (event.key === ' ') {
-            music.play()
-            speechSynthesis.cancel()
-            recog.start()
+            rec()
         }
     });
+    function rec(){
+        music.play()
+        speechSynthesis.cancel()
+        recog.start()
+    }
     recog.onresult = (event) => {
         utterance = event.results[0][0].transcript
         document.getElementById("player").innerHTML = utterance
